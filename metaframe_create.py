@@ -10,15 +10,9 @@ import pandas as pd
 # =======================================
 from data_utils.utils import (
     patient_lesion_nonlesion_videos,
-    load_video,
-    load_all_video,
     load_select_frames,
-    load_bboxs,
     load_frames_with_bboxes,
-    load_frames_paths
 )
-
-from data_utils.print_utils import video_bboxes_print, frame_bboxes_print
 
 RANDOM_STATE = 2
 np.random.seed(RANDOM_STATE)

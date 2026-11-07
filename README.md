@@ -1,5 +1,7 @@
 1. Собрать фрейм 
 
+Последовательно запустить
+
 Указать путь до CADICA на машине (до директории `CADICA`)
 ```bash
 python metaframe_create.py ./CADICA
