@@ -1,0 +1,6 @@
+dataset_yolo/
+runs/
+train_split_2.txt
+val_split_2.txt
+yolo26n.pt
+yolov8n.pt

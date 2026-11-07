@@ -1,8 +1,8 @@
 1. Собрать фрейм 
 
-Указать путь до CADICA на машине (до директории `datasets\CADICA`)
+Указать путь до CADICA на машине (до директории `CADICA`)
 ```bash
-python metaframe_create.py ..\cv_projects\datasets\CADICA
+python metaframe_create.py ./CADICA
 ```
 
 2. Сделать разбиение на train/val, перенести данные
