@@ -1,0 +1,11 @@
+# === Файлы для обучения и валидации ===
+train: ./train_split_2.txt
+val: ./val_split_2.txt
+
+channels: 3
+
+nc: 3
+names:
+  0: "p0_50"
+  1: "p50_90"
+  2: "p_90_100"
