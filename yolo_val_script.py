@@ -2,7 +2,7 @@ import argparse
 from ultralytics  import YOLO
 
 # === parameters ===
-SEED = 2
+RANDOM_STATE = 42
 
 
 if __name__ == "__main__":
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         imgsz=512,
         batch=batch_size,
         workers=1,
-        seed=SEED,
+        seed=RANDOM_STATE,
         deterministic=True,
 
         project="runs/baseline_v1_0_valid",

@@ -14,7 +14,8 @@ from data_utils.utils import (
     load_frames_with_bboxes,
 )
 
-RANDOM_STATE = 2
+
+RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
 
 
@@ -87,12 +88,14 @@ def create_metaframe_fn(
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="preprocess data")
-
-    parser.add_argument("path2dataset",type=str, help="path2CADICA dataset 'datasets/CADICA'")
+    parser.add_argument("path2dataset",type=str, help="path2CADICA dataset 'CADICA'")
+    parser.add_argument("filename",type=str, help="filename to save 'metaframe.csv'")
+    parser.add_argument("imgsize",type=int, help="images size dataset")
     
     args = parser.parse_args()
-
     path2data = args.path2dataset 
+    filename = args.filename
+    imgsize = args.imgsize
 
     # === CADICA ===
     path_2_cadica_dataset_folder = f"{path2data}" # "../cv_projects/datasets/CADICA"
@@ -106,27 +109,13 @@ if __name__ == "__main__":
     path_2_cadica_dataset_folder_selected_video,
         filenames_patirnts
     )
-
-    map_cls_to_target = {
-        "p0_20": 0,
-        "p20_50": 1,
-        "p50_70": 2,
-        "p70_90": 3,
-        "p90_98": 4,
-        "p99": 5,
-        "p100": 6,
-        "-": 7
-    }
-        
-    # === Формируем лейблы ===
-    frame['label'] = frame['cls'].apply(lambda x: map_cls_to_target[x])
-
+    
     # === Нормализуем координаты (yolo формат) ===
-    frame['x_center_norm'] = (frame['x'] + frame['w'] / 2) / 512
-    frame['y_center_norm'] = (frame['y'] + frame['h'] / 2) / 512
+    frame['x_center_norm'] = (frame['x'] + frame['w'] / 2) / imgsize
+    frame['y_center_norm'] = (frame['y'] + frame['h'] / 2) / imgsize
 
-    frame['w_norm'] = frame['w'] / 512
-    frame['h_norm'] = frame['h'] / 512
+    frame['w_norm'] = frame['w'] / imgsize
+    frame['h_norm'] = frame['h'] / imgsize
 
     os.makedirs("./data", exist_ok=True)
-    frame.to_csv("./data/meta_frame.csv", index=False)
+    frame.to_csv(f"./data/{filename}", index=False)

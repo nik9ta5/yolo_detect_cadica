@@ -1,23 +1,39 @@
-1. Собрать фрейм 
-
 Последовательно запустить
 
-Указать путь до CADICA на машине (до директории `CADICA`)
+1. Собрать метафрейм
+(Формирование метафрейма)
+Указать путь до CADICA на машине (до директории `CADICA`) \ название результирующего файла \ размер изображения (512)
 ```bash
-python metaframe_create.py ./CADICA
+python metaframe_create.py ..\cv_projects\datasets\CADICA metaframe.csv 512
 ```
 
-2. Сделать разбиение на train/val, перенести данные
+2. Делаем маппинг, который нужен
+Путь до исходного metaframe \ путь до результирующего (где сохранить)
 ```bash
-python split_dataset.py .\data\meta_frame.csv
+python mapping_run.py .\data\metaframe.csv .\data\metaframe_1.csv
 ```
 
-3. Запустить обучение
+3. Копировать файлы в удобное место и собрать файлы с разметкой 
+(Перенос изображений в нужное место)
+(Нужно запускать каждый раз, когда меняем тип лейблов - потому что нужно перезаписывать файлы с разметкой)
+Путь до метафрейма \ директория для сохранения
+```bash
+python copy_dataset.py .\data\metaframe_1.csv dataset_yolo
+```
+
+4. Сделать разбиение на train/val, перенести данные
+(Разбиение, формирование файлов train.txt, val.txt)
+Путь до метафрейма \ путь до директории для сохранения \ количество сплитов \ frac для фона в train
+```bash
+python split_dataset.py .\data\metaframe_1.csv .\dataset_yolo 5 0.3
+```
+
+5. Запустить обучение
 ```bash
 python yolo_train_script.py
 ```
 
-4. Оценка
+6. Оценка
 ```bash
 python yolo_val_script.py
 ```

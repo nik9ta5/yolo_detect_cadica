@@ -1,11 +1,11 @@
-# === Файлы для обучения и валидации ===
-train: ./train_split_2.txt
-val: ./val_split_2.txt
+# === бинарная классификация ===
+path: ./dataset_yolo
+train: train_fold_1.txt
+val: val_fold_1.txt
 
 channels: 3
 
-nc: 3
+nc: 1
+
 names:
-  0: "p0_50"
-  1: "p50_90"
-  2: "p_90_100"
+  0: "stenos"

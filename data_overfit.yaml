@@ -1,0 +1,11 @@
+# === бинарная классификация ===
+path: ./dataset_yolo
+train: overfitting.txt
+val: overfitting.txt
+
+channels: 3
+
+nc: 1
+
+names:
+  0: "stenos"
