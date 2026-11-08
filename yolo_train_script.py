@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
         project=project,   # корневая папка для экспериментов
         name=exp_name,          # имя конкретного запуска
-        exist_ok=False,                # не перезаписывать, если папка уже есть
+        exist_ok=True,                # не перезаписывать, если папка уже есть
         plots=True,
 
         optimizer="AdamW",
