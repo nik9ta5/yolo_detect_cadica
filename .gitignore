@@ -6,3 +6,4 @@ yolo26n.pt
 yolov8n.pt
 exps.md
 dataset_visualization.ipynb
+__pycache__/

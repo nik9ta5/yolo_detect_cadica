@@ -1,17 +1,21 @@
 import cv2 
 import matplotlib.pyplot as plt
+import torch
 
 from analyze_errors.matching import classify_unmatched_pred
 
 
-def visualizete_predict(
+def visualize_prediction(
     result, matches, un_gt, un_pred, gt, dup_iou: float = 0.3, loc_iou: float = 0.1
 ):
     """Функция для визуализации GT и предсказаний"""
     font = cv2.FONT_HERSHEY_SIMPLEX
     # --- img ---
     img = result.orig_img
-    pred_xyxy = result.boxes.xyxy
+    if result.boxes is not None and len(result.boxes) > 0:
+        pred_xyxy = result.boxes.xyxy
+    else:
+        pred_xyxy = torch.zeros((0, 4))
     gt_xyxy = gt[:, 1:5]
     
     # orig with gt, img with pred TP, img with FP

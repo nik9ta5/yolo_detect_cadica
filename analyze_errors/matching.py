@@ -53,6 +53,7 @@ def match_gt_pred_greedy(
         return [], list(range(N)), list(range(M))
 
     pair_ious = ious[gt_idx, pred_idx]
+    # === SORT IoU, not CONF ===    
     order = torch.argsort(pair_ious, descending=True)
     gt_idx = gt_idx[order].tolist()
     pred_idx = pred_idx[order].tolist()
@@ -97,7 +98,7 @@ def match_gt_with_results(
 
     # --- boxes ---
     boxes = result.boxes
-    if len(boxes) == 0 or boxes is None:
+    if boxes is None or len(boxes) == 0:
         device = gt_xyxy_cls.device if gt_xyxy_cls.numel() > 0 else torch.device('cpu')
         pred_xyxy_cls = torch.zeros((0, 5), device=device)
     else:

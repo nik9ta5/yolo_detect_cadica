@@ -17,7 +17,9 @@ def gt_bboxes_read(path2labels, img_h, img_w, is_torch_tensor=True):
     return torch.from_numpy(arr) if is_torch_tensor else arr
 
 def yolo_format_xcycwh_to_xyxy(bboxes: torch.Tensor) -> torch.Tensor:
-    """Функция для конвертации [x_center_norm, y_center_norm, w_norm, h_norm] to [x,y,x,y]"""
+    """Функция для конвертации [x_center, y_center, w, h] to [x,y,x,y]"""
+    if bboxes.numel() == 0:
+        return bboxes.clone()
     result = bboxes.clone()
     x1 = bboxes[:, 0] - (bboxes[:, 2] / 2)
     y1 = bboxes[:, 1] - (bboxes[:, 3] / 2)

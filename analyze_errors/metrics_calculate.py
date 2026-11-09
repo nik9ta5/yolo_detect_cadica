@@ -44,7 +44,8 @@ def compute_map(
         p2l = os.path.join(labels_dir, f"{stem}.txt")
 
         # --- GT ---
-        gt = gt_bboxes_read(p2l, r.orig_shape[0])
+        h, w = r.orig_shape[:2]
+        gt = gt_bboxes_read(p2l, h, w)
         if gt.numel() == 0:
             gt_xyxy_cls = gt.new_zeros((0, 5))
         else:
@@ -55,7 +56,7 @@ def compute_map(
                 gt_count[g_cls] += 1
 
         # --- PRED (без порога conf) ---
-        n_pred = len(r.boxes)
+        n_pred = len(r.boxes) if r.boxes is not None else 0
         if n_pred == 0:
             continue
 
