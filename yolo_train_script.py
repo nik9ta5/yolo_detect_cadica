@@ -11,6 +11,7 @@ RANDOM_STATE = 42
 
 def get_parameters_argparse():
     parser = argparse.ArgumentParser(description="train script")
+    parser.add_argument("model_weigths", type=str, help="path 2 model weigths")
     parser.add_argument("path2data_file", type=str, help="path to data.yaml file")
     parser.add_argument("imgsize", type=int, help="image size")
     parser.add_argument("project", type=str, help="project name")
@@ -29,6 +30,7 @@ if __name__ == "__main__":
     
     # --- parameters ---    
     args = get_parameters_argparse()
+    model_weigths = args.model_weigths
     path2data_file = args.path2data_file 
     imgsize = args.imgsize
     project = args.project
@@ -40,7 +42,7 @@ if __name__ == "__main__":
 
     
     # === init model ===
-    model = YOLO("yolov8n.pt")  # или yolov8s.pt и т.д.
+    model = YOLO(model_weigths)  # или yolov8s.pt и т.д.
 
     results = model.train(
         data=path2data_file, 
