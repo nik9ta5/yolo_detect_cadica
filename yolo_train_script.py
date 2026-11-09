@@ -66,38 +66,38 @@ if __name__ == "__main__":
 
         # --- полное отключение аугментаций ---
         auto_augment=None,
-        hsv_h=0.0,
-        hsv_s=0.0,
-        hsv_v=0.0,
-        degrees=0.0,
-        translate=0.0,
-        scale=0.0,
-        shear=0.0,
-        perspective=0.0,
-        flipud=0.0,
-        fliplr=0.0,
-        mosaic=0.0,
-        mixup=0.0,
-        copy_paste=0.0,
-        erasing=0.0
+        # hsv_h=0.0,
+        # hsv_s=0.0,
+        # hsv_v=0.0,
+        # degrees=0.0,
+        # translate=0.0,
+        # scale=0.0,
+        # shear=0.0,
+        # perspective=0.0,
+        # flipud=0.0,
+        # fliplr=0.0,
+        # mosaic=0.0,
+        # mixup=0.0,
+        # copy_paste=0.0,
+        # erasing=0.0
 
         # --- аугментации ---
         # цвет: у изображений один канал, оттенок и насыщенность бессмысленны
-        # hsv_h=0.0, hsv_s=0.0, hsv_v=0.3, # яркость/контраст: разные аппараты и экспозиции
+        hsv_h=0.0, hsv_s=0.0, hsv_v=0.3, # яркость/контраст: разные аппараты и экспозиции
         
         # геометрия: умеренная
-        # degrees=10, 
-        # translate=0.1, 
-        # scale=0.3, 
-        # shear=0.0, 
-        # perspective=0.0,
-        # fliplr=0.5, 
-        # flipud=0.0,
+        degrees=10, 
+        translate=0.1, 
+        scale=0.3, 
+        shear=0.0, 
+        perspective=0.0,
+        fliplr=0.5, 
+        flipud=0.0,
         
-        # # смешивание
-        # mosaic=0, # склеивает 4 картинки в одну
-        # close_mosaic=10, 
-        # mixup=0.0, 
-        # copy_paste=0.0,
-        # erasing=0 # затирает кусок изображения
+        # смешивание
+        mosaic=0, # склеивает 4 картинки в одну
+        close_mosaic=10, 
+        mixup=0.0, 
+        copy_paste=0.0,
+        erasing=0 # затирает кусок изображения
     )

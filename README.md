@@ -37,3 +37,8 @@ python yolo_train_script.py
 ```bash
 python yolo_val_script.py
 ```
+
+7. Создание датасетов с фильтрами
+```bash
+python dataset_filters_create.py
+```

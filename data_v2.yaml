@@ -1,0 +1,11 @@
+# === бинарная классификация ===
+path: ./dataset_v1
+train: train_fold_1.txt
+val: val_fold_1.txt
+
+channels: 3
+
+nc: 1
+
+names:
+  0: "stenos"
