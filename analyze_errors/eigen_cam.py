@@ -1,3 +1,5 @@
+from analyze_errors.matching import classify_unmatched_pred
+
 """
 EigenCAM: class-agnostic saliency map для ultralytics YOLO.
 
@@ -269,7 +271,6 @@ def visualize_prediction_with_cam(
         3. FP по категориям            (как в visualize_prediction)
         4. EigenCAM + все боксы        (новая)
     """
-    from analyze_errors.matching import classify_unmatched_pred
 
     font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -306,20 +307,20 @@ def visualize_prediction_with_cam(
         b = pred_xyxy[p]
         pt1 = (int(b[0]), int(b[1])); pt2 = (int(b[2]), int(b[3]))
         cv2.rectangle(img_tp, pt1, pt2, (241, 196, 15), 1)
-        cv2.putText(img_tp, f"{iou:.3f}", (pt1[0], pt1[1] - 5), font, 0.5,
-                    (0, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(img_tp, f"{iou:.3f}", (pt1[0], pt1[1] - 5), font, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+    
     for g in un_gt:
         b = gt[g]
         pt1 = (int(b[1]), int(b[2])); pt2 = (int(b[3]), int(b[4]))
         cv2.rectangle(img_tp, pt1, pt2, (255, 0, 0), 2)
-        cv2.putText(img_tp, "FN", (pt1[0], pt1[1] - 5), font, 0.5,
-                    (255, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(img_tp, "FN", (pt1[0], pt1[1] - 5), font, 0.5, (255, 0, 0), 1, cv2.LINE_AA)
 
     # --- 3. FP категории ---
     img_fp = img.copy()
     for item in gt:
         pt1 = (int(item[1]), int(item[2])); pt2 = (int(item[3]), int(item[4]))
         cv2.rectangle(img_fp, pt1, pt2, (0, 225, 0), 1)
+   
     for p, meta in fp_info["per_fp"].items():
         b = pred_xyxy[p]
         pt1 = (int(b[0]), int(b[1])); pt2 = (int(b[2]), int(b[3]))
@@ -335,16 +336,19 @@ def visualize_prediction_with_cam(
     for item in gt:
         pt1 = (int(item[1]), int(item[2])); pt2 = (int(item[3]), int(item[4]))
         cv2.rectangle(img_cam, pt1, pt2, (0, 255, 0), 1)
+    
     # TP — жёлтый, потолще
     for g, p, iou in matches:
         b = pred_xyxy[p]
         pt1 = (int(b[0]), int(b[1])); pt2 = (int(b[2]), int(b[3]))
         cv2.rectangle(img_cam, pt1, pt2, (241, 196, 15), 2)
+    
     # FN — красный
     for g in un_gt:
         b = gt[g]
         pt1 = (int(b[1]), int(b[2])); pt2 = (int(b[3]), int(b[4]))
         cv2.rectangle(img_cam, pt1, pt2, (255, 0, 0), 2)
+    
     # FP — по категориям
     for p, meta in fp_info["per_fp"].items():
         b = pred_xyxy[p]
@@ -376,6 +380,30 @@ def visualize_prediction_with_cam(
         f"EigenCAM (alpha={alpha})  TP={len(matches)} FN={len(un_gt)} FP={len(un_pred)}"
     )
     axs[3].axis("off")
+
+    plt.tight_layout()
+    plt.show()
+
+
+def only_eigencam_visualizate(
+    result,
+    heatmap: np.ndarray,
+    alpha: float = 0.45,
+    figsize=(20, 7)
+):    
+    img = result.orig_img
+    if img.ndim == 2:
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        
+    # --- 4. EigenCAM + все боксы ---
+    img_cam = overlay_heatmap(img, heatmap, alpha=alpha)
+
+    # --- plot ---
+    # fig, axs = plt.subplots(1, 1, figsize=figsize)
+    plt.figure(figsize=figsize)
+    plt.imshow(cv2.cvtColor(img_cam, cv2.COLOR_BGR2RGB))
+    plt.title(f"EigenCAM (alpha={alpha})")
+    plt.axis("off")
 
     plt.tight_layout()
     plt.show()

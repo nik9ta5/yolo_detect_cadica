@@ -19,7 +19,7 @@ def get_parameters_argparse():
     parser.add_argument("epochs", type=int, help="num epoch")
     parser.add_argument("patience", type=int, help="num patience")
     parser.add_argument("batch_size", type=int, help="batch_size for train")
-    parser.add_argument("lr", type=int, help="learning rate") 
+    parser.add_argument("lr", type=float, help="learning rate") 
     
     return parser.parse_args()
 
