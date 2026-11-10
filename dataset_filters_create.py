@@ -71,32 +71,34 @@ if __name__ == "__main__":
     os.makedirs(images_path, exist_ok=True)
     os.makedirs(labels_path, exist_ok=True)
 
+
     # --- копируем все файлы с разбиениями ---
     for item in os.listdir(path2dataset):
         if Path(item).suffix == '.txt':
             shutil.copy2(f"{path2dataset}/{item}", f"{folder_name}/{item}")
 
-    # 1. Получить файлы с изображениями
+    # 1. Получить файлы с изображениями и лейблами
     image_filenames, labels_filenames = get_filenames(path2dataset_images, path2dataset_labels)
 
+    # Копируем лейблы
     for item in tqdm(labels_filenames, desc="labels copy"):
         item_path = f"{path2dataset_labels}/{item}"
         path_to = f"{labels_path}/{item}"
         shutil.copy2(item_path, path_to)
 
-    # 2. Перебрать в цикле - открыть - применить фильтр - сконкатенировать - сохранить + сохранить лейбл 
-    # [GRAY, CLAHE, Top-Hat]   
+    # 2. Перебрать в цикле - открыть - применить фильтр - сконкатенировать - сохранить + сохранить лейбл    
     for item_img in tqdm(image_filenames, desc="images preprocessing"):
         item_path = f"{path2dataset_images}/{item_img}"
-        
         img = cv2.imread(item_path)
-        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # BGR -> GRAY
         
         # --- clahe ---
         clahe = create_clahe_img(img_gray)
         # --- top hat ---
-        img_tophat = multi_scale_tophat(img_gray)
+        img_tophat = multi_scale_tophat(img_gray, mode="black")
+        
         # --- merge ---
+        # [Orig_GRAY, CLAHE, Top-Hat]
         combined = cv2.merge([img_gray, clahe, img_tophat])
 
         # --- save image ---

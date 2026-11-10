@@ -30,7 +30,7 @@ python split_dataset.py .\data\metaframe_1.csv .\dataset_yolo 5 0.3
 
 5. Запустить обучение
 ```bash
-python yolo_train_script.py
+python yolo_train_script.py params...
 ```
 
 6. Оценка
@@ -38,7 +38,10 @@ python yolo_train_script.py
 python yolo_val_script.py
 ```
 
-7. Создание датасетов с фильтрами
+7. Создание датасета с фильтрами
+Так как разбиение уже существуют и зафиксированы (созданы на шаге 4), будем использовать их, но изображения можно предобработать (добавить фильтры и тп).
+Прописываем путь до директории датасета (где располагаются `images/` и `labels/`) \ название новой директории.
+(Предполагается, что изменяться будет только скрипт `dataset_filters_create.py`, при добавлении новых фильтров)
 ```bash
 python dataset_filters_create.py
 ```
