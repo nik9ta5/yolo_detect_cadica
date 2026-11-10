@@ -5,27 +5,14 @@ import numpy as np
 from tqdm import tqdm
 import argparse
 import shutil
-
-
-def get_parameters_argparse():
-    parser = argparse.ArgumentParser(description="dataset filter create")
-    parser.add_argument("path2dataset", type=str, help="path to dataset")
-    parser.add_argument("folder_name", type=str, help="new folder name")
-
-    return parser.parse_args()
-
-
-def get_filenames(path2images: str, path2labels):
-    image_filenames = os.listdir(path2images)
-    labels_filenames = os.listdir(path2labels)
-    image_filenames.sort()
-    labels_filenames.sort()
-    return image_filenames, labels_filenames
+from skimage.filters import frangi
 
 
 # ==========================================
 # Filters
 # ==========================================
+
+# === CLAHE ===
 def create_clahe_img(img: np.ndarray):
     """Функция для получения CLAHE изображения"""
     img_copy = img.copy()
@@ -38,6 +25,7 @@ def create_clahe_img(img: np.ndarray):
 
     return enhanced
 
+# === Top-Hat ===
 def multi_scale_tophat(img_gray: np.ndarray, kernel_sizes=(10, 15, 20, 25, 30), mode="black") -> np.ndarray:
     """
     Multi-scale Top-Hat (формула 4 из статьи):
@@ -55,12 +43,66 @@ def multi_scale_tophat(img_gray: np.ndarray, kernel_sizes=(10, 15, 20, 25, 30), 
     multi = stack.max(axis=0)
     return cv2.normalize(multi, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
+# === FRANGI ===
+def create_frangi_img(img_gray: np.ndarray) -> np.ndarray:
+    img_float = img_gray.astype(np.float32) / 255.0
+    vesselness = frangi(img_float, sigmas=[1.5, 2, 3, 4], black_ridges=True)
+    vesselness_8u = cv2.normalize(vesselness, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+    return vesselness_8u
+
+
+
+# ==========================================
+# Preprocessing
+# ==========================================
+def clahe_tophat_preprocessing(img_gray: np.ndarray) -> np.ndarray:
+    # --- clahe ---
+    clahe = create_clahe_img(img_gray)
+    # --- top hat ---
+    img_tophat = multi_scale_tophat(img_gray, mode="black")
+    # --- merge ---
+    combined = cv2.merge([img_gray, clahe, img_tophat]) # [Orig_GRAY, CLAHE, Top-Hat]
+    return combined
+
+def clahe_frangi_tophat_preprocessing(img_gray: np.ndarray) -> np.ndarray:
+    # --- clahe ---
+    clahe = create_clahe_img(img_gray)
+    # --- top-hat---
+    img_tophat = multi_scale_tophat(img_gray, mode='black')
+    # --- frangi ---
+    img_frangi_v8 = create_frangi_img(clahe)
+    # --- merge ---
+    combined = cv2.merge([clahe, img_frangi_v8, img_tophat]) # [CLAHE, FRANGI, Top-Hat]
+    return combined
+
+
+
+# ==========================================
+# get parameters
+# ==========================================
+def get_parameters_argparse():
+    parser = argparse.ArgumentParser(description="dataset filter create")
+    parser.add_argument("path2dataset", type=str, help="path to dataset")
+    parser.add_argument("folder_name", type=str, help="new folder name")
+    parser.add_argument('preprocess', type=str, choices=["clahe", "frangi"], help='select dataset preprocess')
+
+    return parser.parse_args()
+
+def get_filenames(path2images: str, path2labels):
+    image_filenames = os.listdir(path2images)
+    labels_filenames = os.listdir(path2labels)
+    image_filenames.sort()
+    labels_filenames.sort()
+    return image_filenames, labels_filenames
+
+
 
 if __name__ == "__main__":
     # --- parameters ---    
     args = get_parameters_argparse()
     path2dataset = args.path2dataset
     folder_name = args.folder_name
+    preprocess = args.preprocess
 
     path2dataset_images = f"{path2dataset}/images"
     path2dataset_labels = f"{path2dataset}/labels"
@@ -70,6 +112,13 @@ if __name__ == "__main__":
     labels_path = f"{folder_name}/labels"
     os.makedirs(images_path, exist_ok=True)
     os.makedirs(labels_path, exist_ok=True)
+
+    # --- select preprocessor ---
+    images_preprocessors = {
+        "clahe": clahe_tophat_preprocessing,
+        "frangi": clahe_frangi_tophat_preprocessing
+    }
+    image_preprocessor = images_preprocessors[preprocess]
 
 
     # --- копируем все файлы с разбиениями ---
@@ -92,14 +141,8 @@ if __name__ == "__main__":
         img = cv2.imread(item_path)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # BGR -> GRAY
         
-        # --- clahe ---
-        clahe = create_clahe_img(img_gray)
-        # --- top hat ---
-        img_tophat = multi_scale_tophat(img_gray, mode="black")
-        
-        # --- merge ---
-        # [Orig_GRAY, CLAHE, Top-Hat]
-        combined = cv2.merge([img_gray, clahe, img_tophat])
+        # --- preprocessing ---
+        img_prep = image_preprocessor(img_gray)
 
         # --- save image ---
-        cv2.imwrite(f"{images_path}/{item_img}", combined)
+        cv2.imwrite(f"{images_path}/{item_img}", img_prep)

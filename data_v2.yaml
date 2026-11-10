@@ -1,7 +1,7 @@
 # === бинарная классификация ===
 path: ./dataset_v1
-train: overfitting.txt
-val: overfitting.txt
+train: train_fold_1.txt
+val: val_fold_1.txt
 
 channels: 3
 
