@@ -274,7 +274,8 @@ def visualize_prediction_with_cam(
 
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    img = result.orig_img
+    img = cv2.cvtColor(result.orig_img, cv2.COLOR_BGR2RGB)
+    
     if img.ndim == 2:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 
@@ -359,15 +360,15 @@ def visualize_prediction_with_cam(
     # --- plot ---
     fig, axs = plt.subplots(1, 4, figsize=figsize)
 
-    axs[0].imshow(cv2.cvtColor(img_gt, cv2.COLOR_BGR2RGB))
+    axs[0].imshow(img_gt)
     axs[0].set_title(f"GT  (N={len(gt)})")
     axs[0].axis("off")
 
-    axs[1].imshow(cv2.cvtColor(img_tp, cv2.COLOR_BGR2RGB))
+    axs[1].imshow(img_tp)
     axs[1].set_title(f"TP={len(matches)}   FN={len(un_gt)}")
     axs[1].axis("off")
 
-    axs[2].imshow(cv2.cvtColor(img_fp, cv2.COLOR_BGR2RGB))
+    axs[2].imshow(img_fp)
     axs[2].set_title(
         f"FP:  dup={len(fp_info['duplicate'])}  "
         f"loc={len(fp_info['localization'])}  "
@@ -375,7 +376,7 @@ def visualize_prediction_with_cam(
     )
     axs[2].axis("off")
 
-    axs[3].imshow(cv2.cvtColor(img_cam, cv2.COLOR_BGR2RGB))
+    axs[3].imshow(img_cam)
     axs[3].set_title(
         f"EigenCAM (alpha={alpha})  TP={len(matches)} FN={len(un_gt)} FP={len(un_pred)}"
     )
@@ -391,7 +392,7 @@ def only_eigencam_visualizate(
     alpha: float = 0.45,
     figsize=(20, 7)
 ):    
-    img = result.orig_img
+    img = cv2.cvtColor(result.orig_img, cv2.COLOR_BGR2RGB)
     if img.ndim == 2:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         
@@ -401,7 +402,7 @@ def only_eigencam_visualizate(
     # --- plot ---
     # fig, axs = plt.subplots(1, 1, figsize=figsize)
     plt.figure(figsize=figsize)
-    plt.imshow(cv2.cvtColor(img_cam, cv2.COLOR_BGR2RGB))
+    plt.imshow(img_cam)
     plt.title(f"EigenCAM (alpha={alpha})")
     plt.axis("off")
 

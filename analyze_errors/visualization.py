@@ -11,7 +11,8 @@ def visualize_prediction(
     """Функция для визуализации GT и предсказаний"""
     font = cv2.FONT_HERSHEY_SIMPLEX
     # --- img ---
-    img = result.orig_img
+    img = cv2.cvtColor(result.orig_img, cv2.COLOR_BGR2RGB)
+
     if result.boxes is not None and len(result.boxes) > 0:
         pred_xyxy = result.boxes.xyxy
     else:
